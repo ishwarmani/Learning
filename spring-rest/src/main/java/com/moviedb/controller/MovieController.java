@@ -74,13 +74,13 @@ public class MovieController {
 
     @RequestMapping(value = "movies/delete/{imdb}", method = RequestMethod.DELETE)
     public ResponseEntity<Movies> deleteMovie(@PathVariable("imdb") String imdb){
-//        Movies movies = movieRepository.findByImdb(imdb);
-//        if(movies == null){
-//            System.out.println("No movie exists with this imdb id");
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }else{
+        Movies movies = movieRepository.findByImdb(imdb);
+        if(movies == null){
+            System.out.println("No movie exists with this imdb id");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }else{
             movieRepository.deleteByImdb(imdb);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//        }
+        }
     }
 }
