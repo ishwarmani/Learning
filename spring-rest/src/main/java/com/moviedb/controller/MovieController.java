@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -19,6 +20,8 @@ public class MovieController {
 
     @Autowired
     MovieRepository movieRepository;
+
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     /*private static final String template = "Hello, %s!";
     private final AtomicLong counter = new AtomicLong();
@@ -46,6 +49,7 @@ public class MovieController {
     @PostMapping("/movie/create")
     public ResponseEntity<Void> saveMovie(@Valid @RequestBody Movies movie,UriComponentsBuilder ucBuilder){
         Movies movies = movieRepository.findByImdb(movie.getImdb());
+        movie.setImdb(bCryptPasswordEncoder.encode(movie.getImdb()));
         if(movies != null){
             System.out.println("A movie already exists with this imdb id");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
