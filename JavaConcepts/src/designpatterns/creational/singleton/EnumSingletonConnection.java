@@ -12,7 +12,7 @@ public enum EnumSingletonConnection {
 
     EnumSingletonConnection(){
         try{
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/sonoo","root","root");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/poc","root","root");
         }catch (SQLException e){
             e.printStackTrace();
         }
