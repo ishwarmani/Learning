@@ -1,9 +1,5 @@
 package com.moviedb.model;
 
-//import org.springframework.boot.autoconfigure.domain.EntityScan;
-//import org.springframework.data.annotation.Id;
-
-import javax.annotation.Generated;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

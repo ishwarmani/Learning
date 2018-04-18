@@ -1,8 +1,7 @@
 package com.moviedb.service;
 
-import com.moviedb.model.Movies;
-import com.moviedb.repositories.MovieRepository;
-import org.springframework.security.core.userdetails.User;
+import com.moviedb.model.User;
+import com.moviedb.repositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,18 +11,18 @@ import static java.util.Collections.emptyList;
 
 @Service("userDetailsServiceImpl")
 public class UserDetailsServiceImpl implements UserDetailsService {
-	private MovieRepository movieRepository;
+	private UserRepository userRepository;
 
-	public UserDetailsServiceImpl(MovieRepository movieRepository) {
-		this.movieRepository = movieRepository;
+	public UserDetailsServiceImpl(UserRepository userRepository) {
+		this.userRepository = userRepository;
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Movies movies = movieRepository.findByTitle(username);
-		if (movies == null) {
+		User user = userRepository.findByUsername(username);
+		if (user == null) {
 			throw new UsernameNotFoundException(username);
 		}
-		return new User(movies.getTitle(), movies.getImdb(), emptyList());
+		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), emptyList());
 	}
 }
