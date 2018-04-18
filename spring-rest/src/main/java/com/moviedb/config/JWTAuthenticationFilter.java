@@ -1,13 +1,14 @@
 package com.moviedb.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.moviedb.model.Movies;
+import com.moviedb.util.SecurityUtils;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -18,10 +19,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.moviedb.util.SecurityConstants.EXPIRATION_TIME;
-import static com.moviedb.util.SecurityConstants.HEADER_STRING;
-import static com.moviedb.util.SecurityConstants.SECRET;
-import static com.moviedb.util.SecurityConstants.TOKEN_PREFIX;
+import static com.moviedb.util.SecurityUtils.EXPIRATION_TIME;
+import static com.moviedb.util.SecurityUtils.HEADER_STRING;
+import static com.moviedb.util.SecurityUtils.SECRET;
+import static com.moviedb.util.SecurityUtils.TOKEN_PREFIX;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private AuthenticationManager authenticationManager;
@@ -34,13 +35,14 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(HttpServletRequest req,
                                                 HttpServletResponse res) throws AuthenticationException {
         try {
-            Movies movies = new ObjectMapper()
-                    .readValue(req.getInputStream(), Movies.class);
+
+            com.moviedb.model.User user = new ObjectMapper()
+                    .readValue(req.getInputStream(), com.moviedb.model.User.class);
 
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            movies.getTitle(),   //username
-                            movies.getImdb(),   //password
+                            user.getUsername(),   //username
+                            user.getPassword(),   //password
                             new ArrayList<>())
             );
         } catch (IOException e) {
@@ -54,11 +56,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
 
-        String token = Jwts.builder()
-                .setSubject(((Movies) auth.getPrincipal()).getTitle())
+       /* String token = Jwts.builder()
+                .setSubject(((User) auth.getPrincipal()).getUsername())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
-                .compact();
-        res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+                .compact();*/
+        String username = ((User) auth.getPrincipal()).getUsername();
+        res.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + SecurityUtils.generateToken(username));
     }
 }
